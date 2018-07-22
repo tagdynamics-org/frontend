@@ -1,26 +1,20 @@
-# front
+# frontend for tagdynamics.org
 
-## Project setup
-```
+## Run locally for development
+
+``` bash
 npm install
-```
-
-### Compiles and hot-reloads for development
-```
 npm run serve
+
+# other commands
+npm run lint
+npm run test:unit
 ```
 
 ### Compiles and minifies for production
-```
+
+``` bash
+npm install
 npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Run your unit tests
-```
-npm run test:unit
+# output in ./dist
 ```
