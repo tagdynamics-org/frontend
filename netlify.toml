@@ -1,0 +1,19 @@
+# See 
+#   https://www.netlify.com/docs/netlify-toml-reference/#getting-started
+
+[Settings]
+ID = "Your_Site_ID"
+
+[build]
+  # In which directory to start build
+  base    = "."
+  command = "npm install && npm run build"
+  publish = "dist/"
+
+# We use Vue router with history mode. Therefore redirect all requests to /index.html
+# See:
+#   https://router.vuejs.org/guide/essentials/history-mode.html#example-server-configurations
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
