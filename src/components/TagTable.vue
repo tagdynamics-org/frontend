@@ -41,20 +41,18 @@
           </b-table-column>
 
           <b-table-column field="tags" label="Categorical tags" width="500">
-            <!--div class="tags"-->
             <b-taglist>
               <span v-for="[k,v] in props.row.dtags" :key="k">
                 <b-taglist attached>
-                  <b-tag type="is-info">{{ k }}</b-tag> 
+                  <b-tag type="is-info">{{ k }}</b-tag>
                   <b-tag>{{ v }}</b-tag> 
                 </b-taglist>
               </span>
 
               <span v-for="tag in props.row.single_tags" :key="tag">
-                <b-tag type="is-primary">{{ tag }}</b-tag> 
+                <b-tag type="is-primary">{{ tag }}</b-tag>
               </span>
             </b-taglist>
-            <!--/div-->
           </b-table-column>
 
           <b-table-column label="Total count" field="total_count" width="120" numeric sortable>
@@ -83,10 +81,10 @@
     <section>
       The tag states listed above only include the follows tags: {{ selectedTags.join(", ") }}.
       These tags are all <b>categorical</b> in the sense that they describe what something is.
-      For example, the list does not include any address tags (eg. like 
+      For example, the list does not include any address tags (eg. like
       <a href="https://taginfo.openstreetmap.org/keys/addr%3Ahousenumber#values">addr:housenumber</a>).
       Even if there are over 1M map elements with house number 1, this criterion does
-      not define a reasonable category of objects on the OSM like, say,  
+      not define a reasonable category of objects on the OSM like, say,
       map elements with <b>building=greenhouse</b> would do.
 
     </section>
@@ -99,7 +97,7 @@
           <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (OSM)
           project, © OpenStreetMap contributors. The OpenStreetMap data is available 
           under the 
-          Open Database License (ODbL). As a derivative work, the data on this webpage
+          Open Database License (ODbL). As a derivative work, the OSM data on this webpage
           is under the same license. The source codes for this analysis are 
           on <a href="https://github.com/tagdynamics-org">github</a>.
 
