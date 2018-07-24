@@ -1,20 +1,16 @@
 <template>
   <div class="about">
-    <h1>TODO: This is an about page</h1>
+    <section>
+      <h1>About</h1>
+      <p>This is work in progress. For background, please see my earlier blog post
+      from 2015 <a href="http://matiasdahl.iki.fi/2015/finding-related-amenity-tags-on-the-openstreetmap">here</a>.
+      </p>
+
+     <p> The codes can be found on <a href="https://github.com/tagdynamics-org">github</a>.
+      </p>
+      </section>
   </div>
 </template>
-
-
-<script lang="ts">
-import Vue from 'vue';
-
-export default Vue.extend({
-  name: 'HelloWorld',
-  props: {
-    msg: String,
-  },
-});
-</script>
 
 <style scoped>
 </style>

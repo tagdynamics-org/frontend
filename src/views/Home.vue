@@ -1,21 +1,20 @@
 <template>
   <div class="home">
-    <HelloWorld msg="more content here.."/>
+    <TagTable/>
   </div>
 </template>
 
 <script lang="ts">
 
-import Vue from 'vue';
+import Vue from "vue";
 
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
-import Footer from '@/components/Footer.vue';
+import TagTable from "@/components/TagTable.vue";
 
 export default Vue.extend({
-  name: 'home',
+  name: "home",
   components: {
-    HelloWorld,
+    TagTable,
   },
 });
 </script>
