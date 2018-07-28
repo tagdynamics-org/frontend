@@ -29,38 +29,38 @@
           @page-change="onPageChange">
 
         <template slot-scope="props">
-          <b-table-column label="Total rank" width="85" numeric
+          <b-table-column label="Total rank" width="25" numeric
                           :visible="sortColumn === 'TotalCounts'">
             {{ props.row.total_rank }}
           </b-table-column>
 
           <!-- Show live rank if we sort by live_count or percent_live -->
-          <b-table-column label="Live rank" field="live_rank" width="85" numeric 
+          <b-table-column label="Live rank" field="live_rank" width="25" numeric 
                           :visible="sortColumn !== 'TotalCounts'">
             {{ props.row.live_rank }}
           </b-table-column>
 
           <b-table-column field="tags" label="Categorical tags" width="500">
-            <b-taglist>
-              <span v-for="[k,v] in props.row.dtags" :key="k">
-                <b-taglist attached>
-                  <b-tag type="is-info">{{ k }}</b-tag>
-                  <b-tag>{{ v }}</b-tag> 
-                </b-taglist>
-              </span>
-
-              <span v-for="tag in props.row.single_tags" :key="tag">
-                <b-tag type="is-primary">{{ tag }}</b-tag>
-              </span>
-            </b-taglist>
+            <TagStateRenderer :state="props.row.state"
+                              :selectedTags="selectedTags"/>
           </b-table-column>
 
           <b-table-column label="Total count" field="total_count" width="120" numeric sortable>
-            {{ props.row.total_count }}
+            <b-tooltip
+              multilined
+              label="Total number of unique map elements (nodes, ways, relations) that at some 
+              point in the OSM history have been tagged with the tag(s) on this line">
+              {{ props.row.total_count }}
+            </b-tooltip>
           </b-table-column>
 
           <b-table-column label="Live count" field="live_count" width="120" numeric sortable>
-            {{ props.row.live_count }}
+            <b-tooltip
+              multilined
+              label="Number of unique map elements that are tagged with the tag(s) on this 
+              line on the latest version of the map">
+              {{ props.row.live_count }}
+            </b-tooltip>
           </b-table-column>
 
           <b-table-column label="Live percent" field="live_percent" width="20" numeric sortable>
@@ -68,11 +68,8 @@
           </b-table-column>
 
           <b-table-column label="" width="20" >
-            <!--router-link 
-              :to="{ name: "tagstate", query: props.row.tag_dict }"
-              class="button is-link is-small" 
-              tag="button">Open
-            </router-link-->
+            <OpenTransitionButton :targetState="props.row.state"
+                                  :selectedTags="selectedTags"/>
           </b-table-column>
         </template>
       </b-table>
@@ -86,58 +83,28 @@
       Even if there are over 1M map elements with house number 1, this criterion does
       not define a reasonable category of objects on the OSM like, say,
       map elements with <b>building=greenhouse</b> would do.
-
     </section>
 
-    <section>
-      <div class="columns" id="license-block">
-        <div class="column is-one-fifth"/>
-        <div class="column" align="lalign" id="license">
-          This work is based on data extracted from the 
-          <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> (OSM)
-          project, © OpenStreetMap contributors. The OpenStreetMap data is available 
-          under the 
-          Open Database License (ODbL). As a derivative work, the OSM data on this webpage
-          is under the same license. The source codes for this analysis are 
-          on <a href="https://github.com/tagdynamics-org">github</a>.
-
-          The OSM data was downloaded {{ downloadDate }}.
-        </div>
-        <div class="column is-one-fifth"/>
-      </div>
-    </section>
+    <LicenseNote :downloadDate="downloadDate" />
   </div>
 </template>
 
-
 <script lang="ts">
+
+import {splitOn, splitTagArray, formatPercent} from "@/helper";
 import Vue from "vue";
 import Buefy from "buefy";
 import "buefy/lib/buefy.css";
+import LicenseNote from "./LicenseNote.vue";
+import OpenTransitionButton from "./OpenTransitionButton.vue"
+import TagStateRenderer from "./TagStateRenderer.vue"
+
 Vue.use(Buefy);
 
 import axios from "axios";
 
-/** Split input string on first occurence of `split` */
-function splitOn(input: string, split: string) {
-  const n = input.indexOf(":");
-  return [input.substring(0, n), input.substring(n + 1)];
-}
-
-function splitTagArray(state: any, selectedTags: string[]): any {
-  const tagArray = state.tags;
-  const result: any = [];
-  tagArray.forEach((tag: string) => {
-    // eg. tag = "a:road"
-    const [k, v]: string[] = splitOn(tag, ":");
-    const i: number = parseInt(k, 16);
-    result.push([selectedTags[i], v]);
-  });
-  return result;
-}
-
 interface TableColumns {
-  dtags: string[];
+  combined_tags: string[];
   single_tags: string[];
 
   live_count: number;
@@ -160,14 +127,15 @@ interface DataType {
   dataSet: any;
 }
 
-export default Vue.extend({
+export default {
+  components: { LicenseNote, OpenTransitionButton, TagStateRenderer },
   props: ["name", "initialEnthusiasm"],
   filters: {},
 
   data(): DataType {
     return {
       data: [],
-      perPage: 15,
+      perPage: 30,
       totalEntries: 1, // total elements in table
       selectedTags: [],
       downloadDate: "",
@@ -187,9 +155,7 @@ export default Vue.extend({
     window.removeEventListener("keydown", this.onkey);
   },
   methods: {
-    formatPercent(x: any) {
-      return x === undefined ? "-" : `${x.toFixed(1)}%`;
-    },
+    formatPercent,
     onkey(event: any) {
       if (event.key === "ArrowRight" && this.page < this.totalPages) {
         this.onPageChange(this.page + 1);
@@ -198,7 +164,6 @@ export default Vue.extend({
       }
     },
     onPageChange(page: any) {
-      console.log("onPageChange", page);
       this.page = page;
       this.loadAsyncData();
     },
@@ -223,8 +188,6 @@ export default Vue.extend({
             const stats: any = args[1];
             const row = {
               state: args[0],
-              dtags: splitTagArray(args[0], this.selectedTags),
-              single_tags: (args[0].state === "DEL") ? ["Deleted"] : [],
               live_count: stats.live ? stats.live.counts : undefined,
               live_rank: stats.live ? stats.live.rank : undefined,
               live_percent: stats.live ? stats.live.livePercent : undefined,
@@ -241,6 +204,7 @@ export default Vue.extend({
         }));
     },
     onSort(field: string, order: string) {
+      this.page = 1;
       this.sortColumn = ({
         total_count: "TotalCounts",
         live_count: "LiveCounts",
@@ -255,18 +219,11 @@ export default Vue.extend({
   },
   computed: {
   },
-});
+};
 </script>
 
 <style>
   #tagtable {
     padding: 0 50px;
-  }
-  #license-block {
-    padding: 20px 0;
-  }
-  #license {
-    font-size: 12px;
-    color: #717171;
   }
 </style>
