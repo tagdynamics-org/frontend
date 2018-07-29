@@ -216,7 +216,7 @@ export default Vue.extend({
   },
   computed: {
   },
-};
+});
 </script>
 
 <style>
