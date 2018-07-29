@@ -96,17 +96,14 @@ import Vue from "vue";
 import Buefy from "buefy";
 import "buefy/lib/buefy.css";
 import LicenseNote from "./LicenseNote.vue";
-import OpenTransitionButton from "./OpenTransitionButton.vue"
-import TagStateRenderer from "./TagStateRenderer.vue"
+import OpenTransitionButton from "./OpenTransitionButton.vue";
+import TagStateRenderer from "./TagStateRenderer.vue";
 
 Vue.use(Buefy);
 
 import axios from "axios";
 
 interface TableColumns {
-  combined_tags: string[];
-  single_tags: string[];
-
   live_count: number;
   live_rank: number;
   total_count: number;
@@ -127,7 +124,7 @@ interface DataType {
   dataSet: any;
 }
 
-export default {
+export default Vue.extend({
   components: { LicenseNote, OpenTransitionButton, TagStateRenderer },
   props: ["name", "initialEnthusiasm"],
   filters: {},

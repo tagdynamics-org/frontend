@@ -24,9 +24,9 @@ import "buefy/lib/buefy.css";
 
 export default Vue.extend({
   props: [
-    "kvPairList", // eg. [['amenity', 'bench'], ['man_made', 'lake']]
-    "isLarge" // true or false (=default for missing value)
-    ], 
+    "kvPairList", // eg. [["amenity", "bench"], ["man_made", "lake"]]
+    "isLarge", // true or false (=default for missing value)
+    ],
 });
 </script>
 

@@ -44,11 +44,11 @@
                               :selectedTags="selectedTags"/>
           </b-table-column>
 
-          <b-table-column label="Total count" field="totalCount" width="120" numeric sortable>
+          <b-table-column label="Total count" field="totalCount" width="15" numeric sortable>
             {{ props.row.totalCount }}
           </b-table-column>
 
-          <b-table-column label="Live count" field="liveCount" width="120" numeric sortable>
+          <b-table-column label="Live count" field="liveCount" width="15" numeric sortable>
             {{ props.row.liveCount }}
           </b-table-column>
 
@@ -88,38 +88,38 @@
 </template>
 
 <script lang="ts">
-import {splitOn, splitTagArray, formatPercent} from "@/helper"
+import {splitOn, splitTagArray, formatPercent} from "@/helper";
 
 import LicenseNote from "./LicenseNote.vue";
-import TagStateRenderer from "./TagStateRenderer.vue"
-import TagKVListRenderer from "./TagKVListRenderer.vue"
+import TagStateRenderer from "./TagStateRenderer.vue";
+import TagKVListRenderer from "./TagKVListRenderer.vue";
 
 import Vue from "vue";
-import axios from 'axios';
+import axios from "axios";
 
 interface TableColumns {
-  state: any,
-  liveCount: number,
-  liveRank: number,
-  totalCount: number,
-  toTransitions: number,
-  fromTransitions: number
+  state: any;
+  liveCount: number;
+  liveRank: number;
+  totalCount: number;
+  toTransitions: number;
+  fromTransitions: number;
 }
 
 interface DataType {
-  $route: any,
-  data: TableColumns[],
-  perPage: number,
-  total: number,
-  loading: boolean,
-  page: number,
-  totalPages: number,
-  sortField: string,
-  sortOrder: string,
-  defaultSortOrder: string,
-  dataSet: any,
-  selectedTags: string[],
-  downloadDate: string | undefined,
+  $route: any;
+  data: TableColumns[];
+  perPage: number;
+  total: number;
+  loading: boolean;
+  page: number;
+  totalPages: number;
+  sortField: string;
+  sortOrder: string;
+  defaultSortOrder: string;
+  dataSet: any;
+  selectedTags: string[];
+  downloadDate: string | undefined;
 }
 
 export default Vue.extend({
@@ -134,53 +134,50 @@ export default Vue.extend({
       loading: false,
       page: 1,
       totalPages: 1,
-      sortField: 'toPlusFromTransitions',
-      sortOrder: 'desc',
-      defaultSortOrder: 'desc',
+      sortField: "toPlusFromTransitions",
+      sortOrder: "desc",
+      defaultSortOrder: "desc",
       dataSet: undefined,
       selectedTags: [],
       downloadDate: undefined,
     };
   },
-  created: function() {
-    console.log('created');
-    window.addEventListener('keydown', this.onkey);
+  created() {
+    console.log("created");
+    window.addEventListener("keydown", this.onkey);
   },
-  beforeDestroy: function() {
-    console.log('beforeDestroy');
-    window.removeEventListener('keydown', this.onkey);
+  beforeDestroy() {
+    console.log("beforeDestroy");
+    window.removeEventListener("keydown", this.onkey);
   },
   methods: {
     formatPercent,
     onkey(event: any) {
-      if (event.key === 'ArrowRight' && this.page < this.totalPages) {
+      if (event.key === "ArrowRight" && this.page < this.totalPages) {
         this.onPageChange(this.page + 1);
-      } else if (event.key === 'ArrowLeft' && this.page > 1) {
+      } else if (event.key === "ArrowLeft" && this.page > 1) {
         this.onPageChange(this.page - 1);
       }
     },
     onPageChange(page: any) {
-      this.page = page
+      this.page = page;
     },
     loadAsyncData() {
       this.loading = true;
-      const params = this.tagList.join('&');
+      const params = this.tagList.join("&");
       axios
-        .get(`http://localhost:8765/transitions?${params}`)
-        .then(response => {
-          console.log(response);
+        .get(`${process.env.VUE_APP_API_URL}/transitions?${params}`)
+        .then((response) => {
           this.data = [];
           this.total = response.data.transitions.length;
           this.dataSet = response.data.dataSet;
           this.selectedTags = response.data.dataSet.selectedTags;
           this.downloadDate = response.data.dataSet.downloaded;
           this.totalPages = Math.floor(this.total / this.perPage) + 1;
-          
+
           response.data.transitions.forEach((item: any) => {
             const row = {
               state: item.state,
-              //combined_tags: splitTagArray(item.state, this.dataSet.selectedTags),
-              //single_tags: (item.state.state === "DEL") ? ["Deleted"] : [],
               totalCount: item.tagStats.total.counts,
               totalRank: item.tagStats.total.rank,
               liveCount: item.tagStats.live ? item.tagStats.live.counts : undefined,
@@ -194,7 +191,7 @@ export default Vue.extend({
           });
           this.loading = false;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           this.loading = false;
         });
@@ -207,37 +204,29 @@ export default Vue.extend({
   },
   mounted() {
     this.loadAsyncData();
-  },    
+  },
   computed: {
-    kvPairs: function(): string[][] {
-      let result: string[][] = [];
-      for (let key in this.$route.query) {
+    kvPairs(): string[][] {
+      const result: string[][] = [];
+      Object.keys(this.$route.query).forEach((key) => {
         const kv: string[] = [key, this.$route.query[key]];
         result.push(kv);
-      }
+      });
       return result;
     },
-    tagList: function(): string[] {
-      let result: string[] = [];
-      for (let key in this.$route.query) {
+    tagList(): string[] {
+      const result: string[] = [];
+      Object.keys(this.$route.query).forEach((key) => {
         result.push(`${key}=${this.$route.query[key]}`);
-      }
+      });
       return result;
     },
-  }
+  },
 });
 </script>
-
 
 <style>
   #tagtable {
     padding: 0 50px;
-  }
-  #license-block {
-    padding: 20px 0;
-  }
-  #license {
-    font-size: 12px;
-    color: #717171;
   }
 </style>

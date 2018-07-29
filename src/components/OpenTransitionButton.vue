@@ -20,14 +20,14 @@ export default Vue.extend({
   props: ["targetState", "selectedTags"],
   computed: {
     /** Show transition button for visible tags; not for Deleted */
-    showButton: function(): boolean {
+    showButton(): boolean {
       return (this.targetState.state === "VIS");
     },
     /** convert eg. ["0:bench"] => {amenity: "bench"} */
-    toArgument: function (): any {
-      return { name: 'transitions', query: getTagDict(this.targetState, this.selectedTags) };
+    toArgument(): any {
+      return { name: "transitions", query: getTagDict(this.targetState, this.selectedTags) };
     },
-  }
+  },
 });
 </script>
 
