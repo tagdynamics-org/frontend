@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">tagdynamics (WIP)</router-link> |
+      <router-link to="/">tagdynamics</router-link> |
       <router-link to="/about">about</router-link> |
       <a href="https://github.com/tagdynamics-org">github</a>
     </div>
