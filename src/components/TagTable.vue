@@ -7,11 +7,9 @@
 
 <template>
   <div id="tagtable">
-    <section class="section">
-      <div class="container">
-          <h1 class="title">Tag states</h1>
-      </div>
-    </section>
+    <div id="search-form">
+      <SearchForm @on-newtags="gotNewTags"/>
+    </div>
     <section>
         <b-table
           :data="data"
@@ -74,16 +72,17 @@
         </template>
       </b-table>
     </section>
-  
-    <section>
+
+    <div class="container has-text-left-tablet">
       The tag states listed above only include the follows tags: {{ selectedTags.join(", ") }}.
       These tags are all <b>categorical</b> in the sense that they describe what something is.
       For example, the list does not include any address tags (eg. like
       <a href="https://taginfo.openstreetmap.org/keys/addr%3Ahousenumber#values">addr:housenumber</a>).
       Even if there are over 1M map elements with house number 1, this criterion does
       not define a reasonable category of objects on the OSM like, say,
-      map elements with <b>building=greenhouse</b> would do.
-    </section>
+      map elements with <b>building=greenhouse</b> would do. Entries with counts below 
+      5 are omitted.
+    </div>
 
     <LicenseNote :downloadDate="downloadDate" />
   </div>
@@ -96,6 +95,7 @@ import Vue from "vue";
 import Buefy from "buefy";
 import "buefy/lib/buefy.css";
 import LicenseNote from "./LicenseNote.vue";
+import SearchForm from "./SearchForm.vue";
 import OpenTransitionButton from "./OpenTransitionButton.vue";
 import TagStateRenderer from "./TagStateRenderer.vue";
 
@@ -122,17 +122,18 @@ interface DataType {
   sortOrder: string;
   defaultSortOrder: string;
   dataSet: any;
+  searchTags: string[];
 }
 
 export default Vue.extend({
-  components: { LicenseNote, OpenTransitionButton, TagStateRenderer },
+  components: { LicenseNote, OpenTransitionButton, TagStateRenderer, SearchForm },
   props: ["name", "initialEnthusiasm"],
   filters: {},
 
   data(): DataType {
     return {
       data: [],
-      perPage: 30,
+      perPage: 20,
       totalEntries: 1, // total elements in table
       selectedTags: [],
       downloadDate: "",
@@ -143,6 +144,7 @@ export default Vue.extend({
       sortOrder: "Descending",
       defaultSortOrder: "desc",
       dataSet: undefined,
+      searchTags: [],
     };
   },
   created() {
@@ -152,6 +154,12 @@ export default Vue.extend({
     window.removeEventListener("keydown", this.onkey);
   },
   methods: {
+    gotNewTags(value: any) {
+      this.searchTags = value;
+      this.page = 1;
+      this.loadAsyncData();
+      console.log("New search tags:", value);
+    },
     formatPercent,
     onkey(event: any) {
       if (event.key === "ArrowRight" && this.page < this.totalPages) {
@@ -169,8 +177,11 @@ export default Vue.extend({
       const params = [
         `sorting=${this.sortColumn}.${this.sortOrder}`,
         `first-index=${(this.page - 1) * this.perPage}`,
-        `n=${this.perPage}`].join("&");
+        `n=${this.perPage}`,
+        `search-tags=${encodeURIComponent(JSON.stringify(this.searchTags))}`,
+        ].join("&");
 
+      console.log(params);
       axios
         .get(`${process.env.VUE_APP_API_URL}/tag-states?${params}`)
         .then((response) => {
@@ -222,5 +233,8 @@ export default Vue.extend({
 <style>
   #tagtable {
     padding: 0 50px;
+  }
+  #search-form {
+    padding: 50px 0;
   }
 </style>
