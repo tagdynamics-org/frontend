@@ -129,7 +129,7 @@ export default Vue.extend({
     return {
       $route: undefined,
       data: [],
-      perPage: 150,
+      perPage: 100,
       total: 1, // total elements in table
       loading: false,
       page: 1,

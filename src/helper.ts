@@ -1,7 +1,7 @@
 
 /** Split input string on first occurence of `split` */
 export function splitOn(input: string, split: string) {
-  const n = input.indexOf(":");
+  const n = input.indexOf(split);
   return [input.substring(0, n), input.substring(n + 1)];
 }
 
