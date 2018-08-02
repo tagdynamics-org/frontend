@@ -21,4 +21,4 @@ npm run build
 
 ### License
 
-MIT, see [LICENSE.md]
+MIT, see the [LICENSE](LICENSE.md) file.
