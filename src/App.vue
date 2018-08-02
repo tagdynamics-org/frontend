@@ -2,7 +2,7 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">tagdynamics</router-link> |
-      <router-link to="/about">about</router-link> |
+      <a href="https://github.com/tagdynamics-org/frontend/wiki/About-tagdynamics.org">about</a> | 
       <a href="https://github.com/tagdynamics-org">github</a>
     </div>
 
