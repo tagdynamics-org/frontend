@@ -18,3 +18,7 @@ npm install
 npm run build
 # output in ./dist
 ```
+
+### License
+
+MIT, see [LICENSE.md]
