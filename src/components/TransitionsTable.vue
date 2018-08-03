@@ -44,6 +44,14 @@
                               :selectedTags="selectedTags"/>
           </b-table-column>
 
+          <b-table-column label="First edit" field="first_edit" width="25" numeric sortable>
+            {{ formatDate(props.row.first_edit) }}
+          </b-table-column>
+
+          <b-table-column label="Last edit" field="last_edit" width="25" numeric sortable>
+            {{ formatDate(props.row.last_edit) }}
+          </b-table-column>
+
           <b-table-column label="Total count" field="totalCount" width="15" numeric sortable>
             {{ props.row.totalCount }}
           </b-table-column>
@@ -88,7 +96,7 @@
 </template>
 
 <script lang="ts">
-import {splitOn, splitTagArray, formatPercent} from "@/helper";
+import {splitOn, splitTagArray, formatPercent, formatDate} from "@/helper";
 
 import LicenseNote from "./LicenseNote.vue";
 import TagStateRenderer from "./TagStateRenderer.vue";
@@ -99,6 +107,8 @@ import axios from "axios";
 
 interface TableColumns {
   state: any;
+  first_edit: string;
+  last_edit: string;
   liveCount: number;
   liveRank: number;
   totalCount: number;
@@ -143,15 +153,14 @@ export default Vue.extend({
     };
   },
   created() {
-    console.log("created");
     window.addEventListener("keydown", this.onkey);
   },
   beforeDestroy() {
-    console.log("beforeDestroy");
     window.removeEventListener("keydown", this.onkey);
   },
   methods: {
     formatPercent,
+    formatDate,
     onkey(event: any) {
       if (event.key === "ArrowRight" && this.page < this.totalPages) {
         this.onPageChange(this.page + 1);
@@ -178,6 +187,8 @@ export default Vue.extend({
           response.data.transitions.forEach((item: any) => {
             const row = {
               state: item.state,
+              first_edit: item.tagStats.firstEdit,
+              last_edit: item.tagStats.lastEdit,
               totalCount: item.tagStats.total.counts,
               totalRank: item.tagStats.total.rank,
               liveCount: item.tagStats.live ? item.tagStats.live.counts : undefined,

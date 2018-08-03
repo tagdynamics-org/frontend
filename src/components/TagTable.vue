@@ -43,7 +43,15 @@
                               :selectedTags="selectedTags"/>
           </b-table-column>
 
-          <b-table-column label="Total count" field="total_count" width="120" numeric sortable>
+          <b-table-column label="First edit" field="first_edit" width="25" numeric sortable>
+            {{ formatDate(props.row.first_edit) }}
+          </b-table-column>
+
+          <b-table-column label="Last edit" field="last_edit" width="25" numeric sortable>
+            {{ formatDate(props.row.last_edit) }}
+          </b-table-column>
+
+          <b-table-column label="Total count" field="total_count" width="25" numeric sortable>
             <b-tooltip
               multilined
               label="Total number of unique map elements (nodes, ways, relations) that at some 
@@ -52,7 +60,7 @@
             </b-tooltip>
           </b-table-column>
 
-          <b-table-column label="Live count" field="live_count" width="120" numeric sortable>
+          <b-table-column label="Live count" field="live_count" width="25" numeric sortable>
             <b-tooltip
               multilined
               label="Number of unique map elements that are tagged with the tag(s) on this 
@@ -61,7 +69,7 @@
             </b-tooltip>
           </b-table-column>
 
-          <b-table-column label="Live percent" field="live_percent" width="20" numeric sortable>
+          <b-table-column label="Live percent" field="live_percent" width="25" numeric sortable>
             {{ formatPercent(props.row.live_percent) }}
           </b-table-column>
 
@@ -90,7 +98,7 @@
 
 <script lang="ts">
 
-import {splitOn, splitTagArray, formatPercent} from "@/helper";
+import {splitOn, splitTagArray, formatPercent, formatDate} from "@/helper";
 import Vue from "vue";
 import Buefy from "buefy";
 import "buefy/lib/buefy.css";
@@ -107,6 +115,8 @@ interface TableColumns {
   live_count: number;
   live_rank: number;
   total_count: number;
+  first_edit: string;
+  last_edit: string;
 }
 
 interface DataType {
@@ -158,9 +168,9 @@ export default Vue.extend({
       this.searchTags = value;
       this.page = 1;
       this.loadAsyncData();
-      console.log("New search tags:", value);
     },
     formatPercent,
+    formatDate,
     onkey(event: any) {
       if (event.key === "ArrowRight" && this.page < this.totalPages) {
         this.onPageChange(this.page + 1);
@@ -181,7 +191,6 @@ export default Vue.extend({
         `search-tags=${encodeURIComponent(JSON.stringify(this.searchTags))}`,
         ].join("&");
 
-      console.log(params);
       axios
         .get(`${process.env.VUE_APP_API_URL}/tag-states?${params}`)
         .then((response) => {
@@ -196,6 +205,8 @@ export default Vue.extend({
             const stats: any = args[1];
             const row = {
               state: args[0],
+              first_edit: stats.firstEdit,
+              last_edit: stats.lastEdit,
               live_count: stats.live ? stats.live.counts : undefined,
               live_rank: stats.live ? stats.live.rank : undefined,
               live_percent: stats.live ? stats.live.livePercent : undefined,
@@ -217,6 +228,8 @@ export default Vue.extend({
         total_count: "TotalCounts",
         live_count: "LiveCounts",
         live_percent: "LivePercent",
+        first_edit: "FirstEdit",
+        last_edit: "LastEdit",
       } as any)[field];
       this.sortOrder = ({ asc: "Ascending", desc: "Descending" } as any)[order];
       this.loadAsyncData();

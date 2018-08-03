@@ -26,6 +26,11 @@ export function getTagDict(state: any, selectedTags: string[]): { [_: string]: s
   return result;
 }
 
+// yymmdd -> yyyy/mm
+export function formatDate(x: string): string {
+  return `20${x.substring(0, 2)}/${x.substring(2, 4)}`;
+}
+
 export function formatPercent(x: any): string {
   return x === undefined ? "-" : `${x.toFixed(1)}%`;
 }
