@@ -101,7 +101,7 @@
 import {splitOn, splitTagArray, formatPercent, formatDate} from "@/helper";
 import Vue from "vue";
 import Buefy from "buefy";
-import "buefy/lib/buefy.css";
+import "buefy/dist/buefy.css";
 import LicenseNote from "./LicenseNote.vue";
 import SearchForm from "./SearchForm.vue";
 import OpenTransitionButton from "./OpenTransitionButton.vue";

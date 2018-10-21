@@ -20,7 +20,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Buefy from "buefy";
-import "buefy/lib/buefy.css";
+import "buefy/dist/buefy.css";
 
 export default Vue.extend({
   props: [

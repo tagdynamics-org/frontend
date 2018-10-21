@@ -13,7 +13,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Buefy from "buefy";
-import "buefy/lib/buefy.css";
+import "buefy/dist/buefy.css";
 import {splitOn, getTagDict, formatPercent} from "@/helper";
 
 export default Vue.extend({

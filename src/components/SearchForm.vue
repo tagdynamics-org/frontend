@@ -21,7 +21,7 @@
 
 import Vue from "vue";
 import Buefy from "buefy";
-import "buefy/lib/buefy.css";
+import "buefy/dist/buefy.css";
 import {splitOn} from "@/helper";
 
 export default Vue.extend({
